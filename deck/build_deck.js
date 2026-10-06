@@ -7,6 +7,8 @@ const fa = require("react-icons/fa");
 const { applyTheme } = require("./apply_theme.js");
 
 const OUT = "MuleTrace_MVP_Brief.pptx";
+const REPO_URL = "github.com/SwasthikaDev/SnowflakeCoCoCLI";
+const LIVE_URL = process.env.LIVE_URL || "";
 
 const THEME = {
   name: "MuleTrace",
@@ -95,6 +97,19 @@ function arrow(s, x1, y1, x2, y2, o = {}) {
   });
 }
 
+function screenshot(s, path, x, y, w, h) {
+  s.addShape(S.ROUNDED_RECTANGLE, { x: x - 0.04, y: y - 0.04, w: w + 0.08, h: h + 0.08, rectRadius: 0.06, fill: { color: C.background1 },
+    line: { color: "D5DCE5", width: 0.75 }, shadow: { type: "outer", color: "0E1A2B", opacity: 0.18, blur: 8, offset: 2, angle: 90 } });
+  s.addImage({ path, x, y, w, h });
+}
+
+function numbered(s, n, x, y, col, title, desc, w) {
+  s.addShape(S.OVAL, { x, y, w: 0.36, h: 0.36, fill: { color: col }, line: { type: "none" } });
+  txt(s, String(n), { x, y, w: 0.36, h: 0.36, fontSize: 12, bold: true, color: C.background1, align: "center", valign: "middle" });
+  txt(s, title, { x: x + 0.5, y: y - 0.02, w, h: 0.3, fontSize: 14, bold: true });
+  txt(s, desc, { x: x + 0.5, y: y + 0.28, w, h: 0.6, fontSize: 12, color: C.accent6 });
+}
+
 function iconCircle(s, data, x, y, d, fill) {
   s.addShape(S.OVAL, { x, y, w: d, h: d, fill: { color: fill }, line: { type: "none" } });
   const p = d * 0.24;
@@ -139,6 +154,7 @@ function ringMotif(s, cx, cy, R, n, rHub, rNode) {
     s.addText("Risk, Fraud & Regulatory Intelligence Copilot", { placeholder: "subtitle" });
     s.addText("Finds mule-account networks in bank transactions, explains them with policy evidence, and drafts an audit-ready STR from a plain-English question.", { placeholder: "body" });
     txt(s, "Prototype / MVP Brief", { x: 0.5, y: 4.75, w: 4, h: 0.3, fontSize: 12, bold: true, color: C.accent5 });
+    txt(s, LIVE_URL ? `Live demo: ${LIVE_URL}  ·  ${REPO_URL}` : REPO_URL, { x: 0.5, y: 5.05, w: 5.5, h: 0.25, fontSize: 10, color: C.background2 });
     ringMotif(s, 7.85, 2.85, 1.45, 12, 0.32, 0.12);
     txt(s, "100 mules → 1 collector", { x: 6.85, y: 4.55, w: 2, h: 0.3, fontSize: 10, color: C.background2, align: "center" });
     s.addNotes("MuleTrace is a copilot for bank and NBFC fraud, AML and compliance teams. It turns raw transactions into mule-network findings, explains each one with evidence and policy clauses, and drafts the Suspicious Transaction Report. Everything runs on Snowflake and is built with CoCo CLI skills.");
@@ -244,6 +260,16 @@ function ringMotif(s, cx, cy, R, n, rHub, rNode) {
   // ===== 6. Solution: patterns =====
   pres.addSection({ title: "Solution & Architecture" });
   {
+    const s = content("SOLUTION · THE PRODUCT", "One workspace, from alert to a filed STR", "Solution & Architecture");
+    screenshot(s, "shots/crop_hero.png", 0.5, 1.38, 6.3, 3.54);
+    numbered(s, 1, 7.1, 1.45, C.accent1, "Alert queue", "Every laundering network found, ranked by risk.", 1.9);
+    numbered(s, 2, 7.1, 2.45, C.accent3, "Money trail", "Each network drawn automatically as a graph.", 1.9);
+    numbered(s, 3, 7.1, 3.45, C.accent2, "Evidence → STR", "Explain, ask, decide and file from one panel.", 1.9);
+    txt(s, LIVE_URL ? `Working app on synthetic data · ${LIVE_URL}` : "Working app on synthetic data", { x: 0.5, y: 4.98, w: 6.3, h: 0.22, fontSize: 10, italic: true, color: C.accent6 });
+    s.addNotes("This is the working product, not a mock-up. The alert queue on the left lists every network the detector found, ranked by risk. The centre draws each network: here all six at once. The right panel holds the evidence, the copilot, the STR draft and the audit log.");
+  }
+
+  {
     const s = content("SOLUTION", "Four laundering typologies, detected as graph patterns", "Solution & Architecture");
     const cards = [
       ["Structuring", C.accent3, "Smurfing: many accounts send repeated small amounts to one collector.", "≥10 senders · ≥5 same-amount transfers each"],
@@ -277,6 +303,59 @@ function ringMotif(s, cx, cy, R, n, rHub, rNode) {
       txt(s, rule, { x: x + 0.22, y: 4.38, w: w - 0.44, h: 0.52, fontSize: 10, bold: true, valign: "middle" });
     });
     s.addNotes("The detector looks for four typologies as time-ordered graph patterns, not single-transaction rules. The thresholds on each card are the defaults and can be configured per bank policy. Every alert keeps the exact transactions that triggered it.");
+  }
+
+  // ===== Product: evidence =====
+  {
+    const s = content("SOLUTION · SIGNAL → EVIDENCE", "Every alert comes with evidence and a policy clause", "Solution & Architecture");
+    screenshot(s, "shots/crop_evidence.png", 0.5, 1.38, 5.54, 3.6);
+    numbered(s, 1, 6.35, 1.42, C.accent3, "Explainable score", "Four visible parts add up to 98/100. No black box.", 2.65);
+    numbered(s, 2, 6.35, 2.32, C.accent1, "KYC red flags", "New account, minimum KYC, inflow 63× declared income.", 2.65);
+    numbered(s, 3, 6.35, 3.22, C.accent4, "Policy attached", "AML-04 §3.2 quoted beside the alert, with its source document.", 2.65);
+    numbered(s, 4, 6.35, 4.12, C.accent2, "Decision logged", "Escalate, request info or close; every action is audited.", 2.65);
+    s.addNotes("Finding F001: one hundred accounts sent two thousand ₹500 transfers to one collector. The score breaks down into four parts anyone can check. Every account shows its KYC red flags, and the exact policy clause it breaches is attached. The investigator's decision goes into the audit log.");
+  }
+
+  // ===== Product: copilot =====
+  {
+    const s = content("SOLUTION · COPILOT", "Ask in plain English, get an answer you can defend", "Solution & Architecture");
+    txt(s, "Questions run against the transaction graph and the policy text. Every answer cites its findings, accounts and clauses.", { x: 0.5, y: 1.35, w: 5.4, h: 0.55, fontSize: 14 });
+    const qa = [
+      ["\u201CWhich accounts received over ₹5 lakh in sub-₹1,000 transfers?\u201D", "Finds AC79448796 and quotes AML-04 §3.2"],
+      ["\u201CWhere did the money from AC11913291 go within 48 hours?\u201D", "Traces ₹2.93 L through 30 mules to one collector"],
+      ["\u201CWhat is our STR filing deadline?\u201D", "Quotes REG-IN §2: 7 working days"],
+      ["\u201CWho are the 10 riskiest accounts?\u201D", "Ranked list with roles and red flags"],
+    ];
+    qa.forEach(([q, a], i) => {
+      const y = 2.02 + i * 0.7;
+      card(s, 0.5, y, 5.4, 0.6);
+      txt(s, q, { x: 0.65, y: y + 0.05, w: 5.15, h: 0.27, fontSize: 12, italic: true, bold: true });
+      txt(s, "→ " + a, { x: 0.65, y: y + 0.31, w: 5.15, h: 0.25, fontSize: 11, color: C.accent6 });
+    });
+    txt(s, "Connected: Snowflake Cortex Agent (Cortex Analyst + Cortex Search). Offline: an in-browser evidence engine keeps the demo working.", { x: 0.5, y: 4.85, w: 5.4, h: 0.4, fontSize: 10, italic: true, color: C.accent6 });
+    screenshot(s, "shots/crop_copilot.png", 6.25, 1.38, 3.22, 3.7);
+    s.addNotes("The copilot answers business questions in plain English. Numbers come from the transaction graph, rules come from the policy text, and every answer lists its sources. In Snowflake it runs as a Cortex Agent over a semantic view and a Cortex Search service.");
+  }
+
+  // ===== Product: STR =====
+  {
+    const s = content("SOLUTION · FINDING → REPORT", "One click from finding to a filing-ready STR", "Solution & Architecture");
+    const items = [
+      "Subjects, roles, KYC data and red flags pre-filled",
+      "Grounds of suspicion written from the evidence",
+      "Policy and regulatory basis cited",
+      "FIU-IND deadline computed: 7 working days",
+      "Names masked unless you are the Principal Officer",
+      "Only the Principal Officer can mark it filed",
+      "Export as Markdown, CSV annex or PDF",
+    ];
+    items.forEach((t, i) => {
+      const y = 1.45 + i * 0.5;
+      s.addImage({ data: I.check, x: 0.5, y: y + 0.03, w: 0.28, h: 0.28 });
+      txt(s, t, { x: 0.95, y, w: 5.0, h: 0.34, fontSize: 14, valign: "middle" });
+    });
+    screenshot(s, "shots/crop_str.png", 6.45, 1.38, 3.05, 3.7);
+    s.addNotes("Drafting the Suspicious Transaction Report is usually hours of manual work. MuleTrace pre-fills it from the evidence, cites the policy basis and computes the filing deadline. Governance is built in: names are masked for investigators, and only the Principal Officer can file.");
   }
 
   // ===== 7. Architecture =====
@@ -363,41 +442,29 @@ function ringMotif(s, cx, cy, R, n, rHub, rNode) {
     s.addNotes("This is the end-to-end flow the problem statement asks for: signal to evidence to a documented finding or report. Each step is a separate module whose output is a table, which makes the system modular and auditable.");
   }
 
-  // ===== 10. Example interaction =====
-  {
-    const s = content("2 · USER EXPERIENCE", "Ask in plain English, get an answer you can defend", "Solution & Architecture");
-    s.addImage({ data: I.user, x: 0.5, y: 1.5, w: 0.32, h: 0.32 });
-    card(s, 1.0, 1.38, 4.8, 0.8);
-    txt(s, "Which accounts received over ₹5 lakh in sub-₹1,000 transfers? Does that breach our policy?", { x: 1.15, y: 1.38, w: 4.5, h: 0.8, fontSize: 13, italic: true, valign: "middle" });
-    card(s, 0.5, 2.35, 5.3, 2.5, C.background1, { line: { color: C.accent2, width: 1.25 } });
-    iconCircle(s, I.robot, 0.68, 2.5, 0.4, C.accent2);
-    txt(s, "MuleTrace", { x: 1.18, y: 2.5, w: 2, h: 0.4, fontSize: 12, bold: true, color: C.accent2, valign: "middle" });
-    txt(s, [
-      { text: "1 account matches. ", options: { bold: true } },
-      { text: "AC79448796 received ₹9.94 lakh in 2,000 transfers from 100 accounts (11–15 Sep).", options: { breakLine: true } },
-      { text: "Finding F001: structuring · Risk 98/100. ", options: { bold: true } },
-      { text: "Matches policy AML-04 §3.2: 10+ unrelated senders, 5+ transfers of ≤₹2,000 each, same amount, >₹1 lakh total." },
-    ], { x: 0.7, y: 3.0, w: 4.9, h: 1.25, fontSize: 13 });
-    pill(s, "View network", 0.7, 4.38, 1.35, C.accent2, C.background1);
-    pill(s, "Draft STR", 2.17, 4.38, 1.1, C.text2, C.background1);
-    txt(s, "Actual output from the MuleTrace demo on synthetic data", { x: 0.5, y: 4.92, w: 5.3, h: 0.25, fontSize: 10, italic: true, color: C.accent6 });
-    // right: evidence
-    card(s, 6.1, 1.38, 3.4, 1.95);
-    const hx = 8.6, hy = 2.36;
-    for (let k = 0; k < 6; k++) { const y = 1.63 + k * 0.29; arrow(s, 6.55, y, hx, hy, { color: C.accent6, width: 1, r1: 0.1, r2: 0.25 }); node(s, 6.55, y, 0.08, C.accent3); }
-    node(s, hx, hy, 0.22, C.accent1);
-    card(s, 6.1, 3.48, 3.4, 1.37);
-    txt(s, "EVIDENCE ATTACHED", { x: 6.28, y: 3.58, w: 3, h: 0.22, fontSize: 10, bold: true, color: C.accent2, charSpacing: 1 });
-    txt(s, [
-      { text: "2,000 source transactions", options: { bullet: { indent: 12 }, breakLine: true } },
-      { text: "Policy AML-04 §3.2 (Cortex Search)", options: { bullet: { indent: 12 }, breakLine: true } },
-      { text: "Detector run + lineage", options: { bullet: { indent: 12 } } },
-    ], { x: 6.28, y: 3.85, w: 3.1, h: 0.95, fontSize: 12, paraSpaceAfter: 2 });
-    s.addNotes("A compliance officer asks a question in plain English. The Cortex Agent answers with the numbers from Cortex Analyst, the policy clause from Cortex Search, and links to the network diagram and an STR draft. Every claim links back to source rows. This example uses synthetic data and a sample bank policy.");
-  }
-
   // ===== 11. Impact: outcomes =====
   pres.addSection({ title: "Impact" });
+  {
+    const s = content("3 · RESULTS ON THE DEMO DATA", "Every planted scheme caught, no false alarms", "Impact");
+    const stats = [
+      ["4 / 4", "schemes caught", "structuring, fan-out → fan-in, layering, round-trip", C.accent1],
+      ["100%", "precision", "2,092 of 2,092 flagged transactions were fraud", C.accent2],
+      ["99.95%", "recall", "2,092 of 2,093 planted fraud transactions found", C.accent5],
+      ["0", "look-alikes flagged", "society dues, subscriptions and family transfers left alone", C.accent4],
+      ["₹30.07 L", "laundered value surfaced", "6 networks, 154 accounts", C.accent3],
+      ["0.1 s", "detection time", "10,259 transactions on a laptop", C.text2],
+    ];
+    stats.forEach(([n, l, d, col], i) => {
+      const x = 0.5 + (i % 3) * 3.075, y = 1.38 + Math.floor(i / 3) * 1.78;
+      card(s, x, y, 2.85, 1.62);
+      txt(s, n, { x: x + 0.22, y: y + 0.14, w: 2.45, h: 0.6, fontSize: 32, bold: true, color: col, fontFace: THEME.headFontFace, valign: "middle" });
+      txt(s, l, { x: x + 0.22, y: y + 0.78, w: 2.45, h: 0.28, fontSize: 14, bold: true });
+      txt(s, d, { x: x + 0.22, y: y + 1.06, w: 2.45, h: 0.48, fontSize: 11, color: C.accent6 });
+    });
+    txt(s, "A synthetic month of banking data with hidden ground-truth labels the detector never sees. Reproduce with: python backend/pipeline.py", { x: 0.5, y: 4.98, w: 9, h: 0.22, fontSize: 10, italic: true, color: C.accent6 });
+    s.addNotes("These are measured, not projected. The synthetic data hides four laundering schemes among ten thousand normal transactions, plus legitimate look-alikes designed to trigger naive rules. The detector caught every scheme and flagged nothing legitimate. Anyone can reproduce this with one command.");
+  }
+
   {
     const s = content("3 · IMPACT STATEMENT", "From days of manual tracing to minutes", "Impact");
     const st = [
@@ -446,6 +513,40 @@ function ringMotif(s, cx, cy, R, n, rHub, rNode) {
     s.addNotes("Scalability comes from Snowflake: elastic warehouses, incremental dynamic tables, and graph search bounded by time window and partition. Beyond the demo, the same pipeline takes new typologies as plug-in rules, shares mule signals across banks through clean rooms, and the agent can answer credit, liquidity and Basel questions because it is a general risk copilot over governed data.");
   }
 
+  // ===== Judging focus =====
+  {
+    const s = content("WHY MULETRACE", "How MuleTrace meets the judging focus", "Impact");
+    const cols = [
+      [I.gavel, C.accent1, "Real-world relevance", [
+        "Built for Indian banking reality: UPI-scale mule networks, PMLA, FIU-IND STRs",
+        "Follows how AML teams actually work: alert, evidence, decision, report",
+        "Respects PII masking, tipping-off and record-keeping rules",
+      ]],
+      [I.bolt, C.accent5, "Technical execution", [
+        "Time-ordered graph detection: 100% precision, 99.95% recall",
+        "The same detector runs locally and as a Snowpark procedure",
+        "Cortex Agent, Cortex Search, semantic view, Dynamic Tables, AI_COMPLETE",
+      ]],
+      [I.layers, C.accent2, "Solution completeness", [
+        "Covers the full flow: signal, evidence, documented finding, report",
+        "Joins transactions and KYC data with policy and filing text",
+        "Working app, open code, reproducible data and audit trail",
+      ]],
+    ];
+    cols.forEach(([ic, col, h, pts], i) => {
+      const x = 0.5 + i * 3.075;
+      card(s, x, 1.38, 2.85, 3.7);
+      iconCircle(s, ic, x + 0.22, 1.55, 0.5, col);
+      txt(s, h, { x: x + 0.85, y: 1.55, w: 1.9, h: 0.5, fontSize: 15, bold: true, valign: "middle" });
+      pts.forEach((t, k) => {
+        const y = 2.25 + k * 0.92;
+        s.addShape(S.OVAL, { x: x + 0.24, y: y + 0.08, w: 0.1, h: 0.1, fill: { color: col }, line: { type: "none" } });
+        txt(s, t, { x: x + 0.45, y, w: 2.25, h: 0.85, fontSize: 12 });
+      });
+    });
+    s.addNotes("Mapped to the judging focus. Relevance: a real Indian banking problem with real regulatory constraints. Execution: measured accuracy and genuine Snowflake Cortex usage. Completeness: every step from signal to filed report, working end to end.");
+  }
+
   // ===== 13. Closing =====
   pres.addSection({ title: "Close" });
   {
@@ -460,10 +561,14 @@ function ringMotif(s, cx, cy, R, n, rHub, rNode) {
       "One-click STR draft with evidence attached",
     ];
     items.forEach((t, i) => {
-      const y = 2.45 + i * 0.48;
+      const y = 2.45 + i * 0.42;
       s.addImage({ data: I.check, x: 0.5, y: y + 0.04, w: 0.26, h: 0.26 });
       txt(s, t, { x: 0.92, y, w: 4.9, h: 0.34, fontSize: 15, color: C.background1, valign: "middle" });
     });
+    txt(s, [
+      ...(LIVE_URL ? [{ text: "Live demo  ", options: { bold: true, color: C.accent5 } }, { text: LIVE_URL, options: { breakLine: true } }] : []),
+      { text: "Code  ", options: { bold: true, color: C.accent5 } }, { text: REPO_URL },
+    ], { x: 0.5, y: 4.62, w: 5.4, h: 0.55, fontSize: 12, color: C.background1 });
     ringMotif(s, 7.85, 2.85, 1.45, 12, 0.32, 0.12);
     txt(s, "MuleTrace: follow the money, file with confidence.", { x: 6.2, y: 4.55, w: 3.3, h: 0.5, fontSize: 12, italic: true, color: C.accent5, align: "center" });
     s.addNotes("Close on what judges will see in the demo: synthetic data with ground truth, detection, the network diagram, the copilot answering with citations, and the STR draft.");

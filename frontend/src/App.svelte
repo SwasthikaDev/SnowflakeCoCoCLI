@@ -37,6 +37,15 @@
       error = e.message;
     }
     cortex = await cortexAvailable();
+    // Deep links, e.g. ?finding=F001&tab=str, ?account=AC79448796, ?q=Explain%20F001, ?role=principal
+    const p = new URLSearchParams(location.search);
+    if (D) {
+      if (p.get("role") === "principal") role = "principal";
+      if (p.get("finding") && D.findingById.has(p.get("finding"))) findingId = p.get("finding");
+      if (p.get("account")) accountId = p.get("account");
+      if (["evidence", "copilot", "str", "audit"].includes(p.get("tab"))) tab = p.get("tab");
+      if (p.get("q")) ask(p.get("q"));
+    }
   });
 
   let finding = $derived(D && findingId ? D.findingById.get(findingId) : null);
