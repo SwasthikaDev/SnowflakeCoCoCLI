@@ -1,0 +1,363 @@
+1
+00:00:00,100 --> 00:00:02,002
+This is MuleTrace, a risk,
+
+2
+00:00:01,964 --> 00:00:06,065
+fraud and regulatory intelligence copilot for banks and NBFCs.
+
+3
+00:00:06,679 --> 00:00:10,178
+It finds mule-account networks hidden in transaction data,
+
+4
+00:00:10,184 --> 00:00:12,912
+explains each one with evidence and policy,
+
+5
+00:00:12,874 --> 00:00:16,137
+and drafts an audit-ready suspicious transaction report.
+
+6
+00:00:16,690 --> 00:00:18,068
+Here is the problem.
+
+7
+00:00:18,705 --> 00:00:22,582
+Ten lakh rupees can leave a bank as two thousand transfers of five
+
+8
+00:00:22,444 --> 00:00:24,870
+hundred rupees, through a hundred mule accounts.
+
+9
+00:00:25,490 --> 00:00:29,513
+Every transfer sits below every threshold, so no rule fires.
+
+10
+00:00:30,122 --> 00:00:32,571
+The fraud is only visible as a network.
+
+11
+00:00:33,120 --> 00:00:34,676
+Let's run it end to end.
+
+12
+00:00:35,291 --> 00:00:38,019
+The input is a synthetic month of banking data:
+
+13
+00:00:38,036 --> 00:00:42,149
+ten thousand transactions, six hundred accounts with KYC details,
+
+14
+00:00:42,110 --> 00:00:44,291
+and our AML policy documents.
+
+15
+00:00:44,911 --> 00:00:45,776
+Processing:
+
+16
+00:00:45,804 --> 00:00:49,325
+the graph detector scans every transaction for four laundering
+
+17
+00:00:49,186 --> 00:00:50,173
+typologies.
+
+18
+00:00:50,793 --> 00:00:54,358
+The output is six suspicious networks, ranked by risk.
+
+19
+00:00:54,978 --> 00:00:57,852
+Because the data carries hidden ground-truth labels,
+
+20
+00:00:57,813 --> 00:00:59,247
+we can score ourselves:
+
+21
+00:00:59,275 --> 00:01:03,298
+100% precision and 99.95%
+
+22
+00:01:03,159 --> 00:01:05,474
+recall, in about a tenth of a second.
+
+23
+00:01:06,020 --> 00:01:09,474
+This is the investigator workspace, live on Cloudflare.
+
+24
+00:01:10,088 --> 00:01:13,821
+The header shows the month at a glance: transactions, accounts,
+
+25
+00:01:13,782 --> 00:01:16,790
+networks found, and thirty lakh rupees at risk.
+
+26
+00:01:17,410 --> 00:01:20,283
+On the left is the alert queue, ranked by risk,
+
+27
+00:01:20,245 --> 00:01:21,968
+with a filter by typology.
+
+28
+00:01:22,588 --> 00:01:26,645
+The canvas draws every network the detector found: a structuring ring,
+
+29
+00:01:26,617 --> 00:01:30,629
+two layering chains, a fan-out and fan-in, and two round-trip cycles.
+
+30
+00:01:31,180 --> 00:01:34,276
+Let's open the top alert, F001.
+
+31
+00:01:34,902 --> 00:01:38,680
+A hundred accounts sent two thousand small transfers to one collector,
+
+32
+00:01:38,708 --> 00:01:41,805
+eighty-four percent of them exactly five hundred rupees.
+
+33
+00:01:42,447 --> 00:01:46,392
+The risk score of ninety-eight is fully explainable: pattern detected,
+
+34
+00:01:46,398 --> 00:01:50,275
+amount at stake, account red flags, and pattern strength.
+
+35
+00:01:50,896 --> 00:01:56,380
+Below it is the exact clause the network breaches, AML-04 section 3.2,
+
+36
+00:01:56,342 --> 00:01:58,133
+quoted with its source document,
+
+37
+00:01:58,150 --> 00:02:01,191
+followed by every account and every transaction,
+
+38
+00:02:01,208 --> 00:02:04,048
+exportable as a CSV evidence pack.
+
+39
+00:02:04,600 --> 00:02:06,870
+Clicking an account opens its profile.
+
+40
+00:02:07,485 --> 00:02:11,229
+This collector was opened just thirty-one days before the activity,
+
+41
+00:02:11,202 --> 00:02:12,736
+holds minimum KYC,
+
+42
+00:02:12,697 --> 00:02:16,151
+and received sixty-three times its declared monthly income.
+
+43
+00:02:16,782 --> 00:02:18,550
+Its counterparties are listed,
+
+44
+00:02:18,546 --> 00:02:20,716
+and the graph highlights its neighbourhood.
+
+45
+00:02:21,336 --> 00:02:22,702
+Names stay masked,
+
+46
+00:02:22,697 --> 00:02:26,341
+because an investigator doesn't need personal data to triage.
+
+47
+00:02:26,890 --> 00:02:29,886
+The same evidence exists for every typology.
+
+48
+00:02:30,501 --> 00:02:33,184
+F005 is a fan-out and fan-in:
+
+49
+00:02:33,146 --> 00:02:35,796
+one source splits money across thirty mules,
+
+50
+00:02:35,802 --> 00:02:37,916
+just under ten thousand rupees each,
+
+51
+00:02:37,889 --> 00:02:41,521
+and they pass ninety-nine percent of it to one collector within hours.
+
+52
+00:02:42,153 --> 00:02:44,434
+F002 is a layering chain:
+
+53
+00:02:44,485 --> 00:02:48,508
+seven and a half lakh rupees hop through six accounts in twelve hours.
+
+54
+00:02:49,150 --> 00:02:51,488
+F003 is a round trip:
+
+55
+00:02:51,550 --> 00:02:54,512
+money loops through four accounts and comes back home.
+
+56
+00:02:55,060 --> 00:02:56,293
+Now the copilot.
+
+57
+00:02:56,918 --> 00:02:58,385
+Ask in plain English:
+
+58
+00:02:58,369 --> 00:03:02,180
+which accounts received over five lakh rupees in transfers under a
+
+59
+00:03:02,041 --> 00:03:02,772
+thousand?
+
+60
+00:03:03,392 --> 00:03:05,885
+It finds the collector, links the finding,
+
+61
+00:03:05,858 --> 00:03:07,682
+and quotes the policy clause.
+
+62
+00:03:08,302 --> 00:03:09,825
+Ask it to trace money,
+
+63
+00:03:09,809 --> 00:03:13,307
+and it follows the funds from the fan-out source through thirty mules
+
+64
+00:03:13,168 --> 00:03:15,394
+to one account within forty-eight hours.
+
+65
+00:03:16,014 --> 00:03:19,847
+Ask a regulatory question, and it answers from the policy text:
+
+66
+00:03:19,887 --> 00:03:23,385
+an STR is due to FIU-IND within seven working days.
+
+67
+00:03:24,006 --> 00:03:26,075
+Every answer lists its sources.
+
+68
+00:03:26,630 --> 00:03:29,336
+Every alert ends in a documented decision.
+
+69
+00:03:29,951 --> 00:03:33,851
+The investigator adds a note and escalates to the Principal Officer.
+
+70
+00:03:34,471 --> 00:03:37,746
+Switching the role to Principal Officer unmasks names,
+
+71
+00:03:37,830 --> 00:03:40,324
+just as a Snowflake masking policy would.
+
+72
+00:03:40,944 --> 00:03:44,844
+One click drafts the suspicious transaction report: subjects,
+
+73
+00:03:44,794 --> 00:03:49,464
+transactions, grounds of suspicion, policy basis, recommended actions,
+
+74
+00:03:49,459 --> 00:03:50,893
+and the filing deadline.
+
+75
+00:03:51,513 --> 00:03:54,141
+Only the Principal Officer can mark it filed,
+
+76
+00:03:54,102 --> 00:03:56,496
+and every step lands in the audit log.
+
+77
+00:03:57,050 --> 00:04:00,280
+Under the hood, MuleTrace is designed Snowflake-native.
+
+78
+00:04:00,895 --> 00:04:04,137
+Transactions and policy documents land in Snowflake.
+
+79
+00:04:04,757 --> 00:04:07,474
+Dynamic Tables keep flow features fresh.
+
+80
+00:04:08,094 --> 00:04:11,458
+The same Python detector runs as a Snowpark procedure.
+
+81
+00:04:12,089 --> 00:04:14,304
+Cortex Search indexes the policies,
+
+82
+00:04:14,288 --> 00:04:17,608
+and a Cortex Agent combines a semantic view with search,
+
+83
+00:04:17,636 --> 00:04:21,000
+so every answer carries both numbers and citations.
+
+84
+00:04:21,550 --> 00:04:25,450
+The workflow is packaged as three modular CoCo CLI skills:
+
+85
+00:04:25,445 --> 00:04:29,881
+ingest for input, detect for processing, and investigate for output.
+
+86
+00:04:30,507 --> 00:04:33,759
+Each is a reusable skill, versioned in the repository.
+
+87
+00:04:34,310 --> 00:04:37,038
+The results: every planted scheme caught,
+
+88
+00:04:37,033 --> 00:04:40,844
+no legitimate look-alikes flagged, and a complete path from signal,
+
+89
+00:04:40,839 --> 00:04:42,909
+to evidence, to a filed report.
+
+90
+00:04:43,460 --> 00:04:44,447
+MuleTrace.
+
+91
+00:04:45,062 --> 00:04:47,678
+Follow the money, and file with confidence.

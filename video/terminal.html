@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Windows PowerShell</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #0c0c0c; }
+  .win { position: absolute; inset: 40px 60px; background: #0c0c0c; border: 1px solid #333; border-radius: 10px; overflow: hidden;
+         box-shadow: 0 20px 60px rgba(0,0,0,.6); display: flex; flex-direction: column; }
+  .bar { height: 42px; background: #1f1f1f; display: flex; align-items: center; padding: 0 16px; gap: 10px;
+         font: 15px "Segoe UI", sans-serif; color: #ddd; }
+  .bar .tab { background: #0c0c0c; padding: 8px 16px; border-radius: 8px 8px 0 0; margin-top: 8px; }
+  .term { flex: 1; padding: 22px 28px; font: 22px/1.45 "Cascadia Mono", Consolas, monospace; color: #cccccc; white-space: pre-wrap; overflow: hidden; }
+  .ps { color: #cccccc; } .cmd { color: #f9f1a5; } .ok { color: #16c60c; } .crit { color: #e74856; } .high { color: #f9f1a5; } .dim { color: #767676; }
+  .cursor { display: inline-block; width: 12px; height: 24px; background: #ccc; vertical-align: text-bottom; animation: b 1s steps(1) infinite; }
+  @keyframes b { 50% { opacity: 0; } }
+  .phase { position: absolute; top: 70px; right: 90px; font: 700 20px "Segoe UI", sans-serif; letter-spacing: .12em; padding: 10px 18px;
+           border-radius: 999px; color: #fff; opacity: 0; transition: opacity .4s, background .4s; }
+</style>
+</head>
+<body>
+<div class="win">
+  <div class="bar"><span class="tab">Windows PowerShell · bank-account-tracking</span></div>
+  <div class="term" id="t"></div>
+</div>
+<div class="phase" id="phase"></div>
+<script>
+const PROMPT = "PS C:\\Projects\\bank-account-tracking> ";
+const data = JSON.parse(decodeURIComponent(location.hash.slice(1)));
+const steps = [
+  { phase: ["INPUT", "#29B5E8"], cmd: Object.keys(data)[0], at: 600 },
+  { phase: ["INPUT", "#29B5E8"], cmd: Object.keys(data)[1], at: 7200 },
+  { phase: ["PROCESSING", "#E8A33D"], cmd: Object.keys(data)[2], at: 12500, think: 2600, outPhase: ["OUTPUT", "#1B998B"] },
+];
+const t = document.getElementById("t"), ph = document.getElementById("phase");
+const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+const color = (line) => {
+  let h = esc(line);
+  if (/precision/.test(line)) return `<span class="ok">${h}</span>`;
+  h = h.replace(/\bcritical\b/, '<span class="crit">critical</span>').replace(/\bhigh\b/, '<span class="high">high</span>');
+  if (/^wrote /.test(line)) return `<span class="dim">${h}</span>`;
+  return h;
+};
+let html = "";
+const render = (cursor = true) => { t.innerHTML = html + (cursor ? '<span class="cursor"></span>' : ""); };
+const setPhase = ([label, bg]) => { ph.textContent = label; ph.style.background = bg; ph.style.opacity = 1; };
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+(async () => {
+  html = `<span class="ps">${esc(PROMPT)}</span>`; render();
+  let clock = 0;
+  for (const s of steps) {
+    await sleep(Math.max(0, s.at - clock)); clock = s.at;
+    setPhase(s.phase);
+    for (const ch of s.cmd) { html += `<span class="cmd">${esc(ch)}</span>`; render(); await sleep(38); clock += 38; }
+    html += "\n"; render(false);
+    if (s.think) { await sleep(s.think); clock += s.think; }
+    if (s.outPhase) setPhase(s.outPhase);
+    for (const line of data[s.cmd].replace(/\r/g, "").split("\n")) { html += color(line) + "\n"; render(false); await sleep(110); clock += 110; }
+    html += `\n<span class="ps">${esc(PROMPT)}</span>`; render();
+  }
+})();
+</script>
+</body>
+</html>
