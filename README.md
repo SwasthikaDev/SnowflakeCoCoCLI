@@ -65,7 +65,9 @@ The one missed transaction is the victim's original payment into the fan-out sou
 | Copilot | Cortex Agent `APP.MULETRACE_AGENT` | [`07`](snowflake/07_agent.sql) | `agent-studio` |
 | Governance | masking policies, tags, access audit view | [`08`](snowflake/08_governance.sql) | `data-governance`, `lineage` |
 | Cases & STR | `CASES`, `EVIDENCE_PACKS`, `DRAFT_STR` (AI_COMPLETE), alert | [`09`](snowflake/09_cases_and_str.sql) | `ai-functions-pipeline-builder`, `alert` |
-| Analyst workflow | custom skill `$muletrace-investigate` | [`.cortex/skills`](.cortex/skills/muletrace-investigate/SKILL.md) | `skill-development` |
+| Analyst workflow | custom skills `$muletrace-ingest` → `$muletrace-detect` → `$muletrace-investigate` | [`.cortex/skills`](.cortex/skills/) | `skill-development` |
+
+**End-to-end in CoCo CLI (input → processing → output):** `$muletrace-ingest` loads the data, `$muletrace-detect` builds features and runs the detector, `$muletrace-investigate F001` produces the evidence pack, decision and STR. Script for the demo video: [`docs/demo_video_script.md`](docs/demo_video_script.md).
 
 Modules talk only through tables, so a new typology, another UI or a different detector plugs in without touching the rest. The **same `detector.py`** runs locally and inside Snowflake.
 

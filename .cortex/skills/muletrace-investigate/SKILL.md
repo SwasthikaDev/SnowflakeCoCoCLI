@@ -1,6 +1,6 @@
 ---
 name: muletrace-investigate
-description: Investigate a MuleTrace laundering alert end to end in Snowflake — pull the evidence pack, explain the network, check the policy clause, record a decision, and draft the STR.
+description: OUTPUT step of the MuleTrace workflow — investigate a laundering alert end to end in Snowflake: pull the evidence pack, explain the network, check the policy clause, record a decision, and draft the STR.
 tools:
 - sql_execute
 ---

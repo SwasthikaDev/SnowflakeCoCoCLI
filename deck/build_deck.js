@@ -160,6 +160,32 @@ function ringMotif(s, cx, cy, R, n, rHub, rNode) {
     s.addNotes("MuleTrace is a copilot for bank and NBFC fraud, AML and compliance teams. It turns raw transactions into mule-network findings, explains each one with evidence and policy clauses, and drafts the Suspicious Transaction Report. Everything runs on Snowflake and is built with CoCo CLI skills.");
   }
 
+  // ===== Executive summary =====
+  {
+    const s = content("EXECUTIVE SUMMARY", "Catch the network, cite the rule, file the STR", "Introduction");
+    const cols = [
+      ["THE PROBLEM", C.accent1, "Mule networks split lakhs into thousands of small UPI transfers.", "Each transfer looks harmless, so rules miss the scheme and analysts trace it by hand for days, then write the STR from scratch."],
+      ["WHAT WE BUILT", C.accent4, "A copilot that sees the network, explains it and drafts the report.", "Graph detection of four laundering typologies, evidence and policy clauses on every alert, plain-English Q&A, one-click STR, designed Snowflake-native."],
+    ];
+    cols.forEach(([k, col, h, d], i) => {
+      const x = 0.5 + i * 3.075;
+      card(s, x, 1.38, 2.85, 3.7);
+      txt(s, k, { x: x + 0.22, y: 1.55, w: 2.45, h: 0.25, fontSize: 11, bold: true, color: col, charSpacing: 1 });
+      txt(s, h, { x: x + 0.22, y: 1.88, w: 2.45, h: 1.0, fontSize: 16, bold: true });
+      txt(s, d, { x: x + 0.22, y: 2.95, w: 2.45, h: 1.9, fontSize: 13, color: C.accent6 });
+    });
+    const x = 6.65;
+    card(s, x, 1.38, 2.85, 3.7, C.text2);
+    txt(s, "PROOF", { x: x + 0.22, y: 1.55, w: 2.45, h: 0.25, fontSize: 11, bold: true, color: C.accent5, charSpacing: 1 });
+    [["4 / 4", "laundering schemes caught"], ["100%", "precision, 0 false alarms"], ["99.95%", "recall on labelled data"]].forEach(([n, l], k) => {
+      const y = 1.9 + k * 0.82;
+      txt(s, n, { x: x + 0.22, y, w: 2.45, h: 0.45, fontSize: 26, bold: true, color: C.background1, fontFace: THEME.headFontFace, valign: "middle" });
+      txt(s, l, { x: x + 0.22, y: y + 0.44, w: 2.45, h: 0.28, fontSize: 12, color: C.background2 });
+    });
+    txt(s, [{ text: "Live: ", options: { bold: true, color: C.accent5 } }, { text: LIVE_URL || "demo available" }], { x: x + 0.22, y: 4.55, w: 2.45, h: 0.3, fontSize: 12, color: C.background1 });
+    s.addNotes("The whole pitch in one slide. Problem: mule networks hide in small transfers that rules miss. Solution: MuleTrace detects the network, explains it with evidence and policy, and drafts the STR. Proof: every planted scheme caught with no false alarms, and it is live.");
+  }
+
   // ===== 2. Problem =====
   pres.addSection({ title: "Problem Brief" });
   {
@@ -255,6 +281,32 @@ function ringMotif(s, cx, cy, R, n, rHub, rNode) {
       txt(s, b, { x: 5.43, y, w: 3.95, h: 0.6, fontSize: 14, valign: "middle" });
     });
     s.addNotes("Current pain versus improvement, row by row. The key shift is from transaction-level rules to network-level analysis, with evidence and the report produced in the same flow.");
+  }
+
+  // ===== Comparison =====
+  {
+    const s = content("1 · WHY TODAY'S TOOLS MISS IT", "Only MuleTrace covers signal, evidence and report", "Problem Brief");
+    const Y = "✓", P = "~", N = "✗";
+    const rows = [
+      ["Sees networks across many accounts", N, P, N, Y],
+      ["Explains why an account is flagged", Y, N, P, Y],
+      ["Cites the policy clause breached", N, N, P, Y],
+      ["Answers plain-English questions", N, N, Y, Y],
+      ["Drafts the STR from the evidence", N, N, P, Y],
+      ["Keeps data inside the governed platform", Y, P, N, Y],
+    ];
+    const markColor = { [Y]: HEX.accent2, [P]: HEX.accent3, [N]: "9AA6B5" };
+    const head = (t, hi) => ({ text: t, options: { bold: true, fontSize: 12, color: hi ? HEX.lt1 : HEX.dk1, fill: { color: hi ? HEX.accent2 : HEX.lt2 }, align: "center", valign: "middle" } });
+    const table = [[{ text: "", options: { fill: { color: HEX.lt1 } } }, head("Threshold rules"), head("Black-box ML score"), head("Generic LLM chatbot"), head("MuleTrace", true)]];
+    for (const [label, ...marks] of rows) {
+      table.push([
+        { text: label, options: { fontSize: 13, color: HEX.dk1, valign: "middle" } },
+        ...marks.map((m, i) => ({ text: m, options: { fontSize: 18, bold: true, align: "center", valign: "middle", color: markColor[m], fontFace: "Segoe UI Symbol", fill: { color: i === 3 ? "E3F4F1" : HEX.lt1 } } })),
+      ]);
+    }
+    s.addTable(table, { x: 0.5, y: 1.38, w: 9, colW: [3.4, 1.4, 1.4, 1.4, 1.4], rowH: 0.48, border: { type: "solid", pt: 0.75, color: "E3E8EF" }, fontFace: THEME.bodyFontFace });
+    txt(s, "✓ yes   ~ partly   ✗ no  ·  Typical capabilities of each approach, not specific products.", { x: 0.5, y: 4.85, w: 9, h: 0.25, fontSize: 10, italic: true, color: C.accent6 });
+    s.addNotes("Why build this? Threshold rules check one transaction at a time, so they miss networks. Machine-learning scores can find mules but rarely explain themselves or cite policy. Generic chatbots answer questions but don't see the transaction graph and send data outside the bank's platform. MuleTrace combines all of it inside Snowflake.");
   }
 
   // ===== 6. Solution: patterns =====
@@ -393,6 +445,28 @@ function ringMotif(s, cx, cy, R, n, rHub, rNode) {
     s.addNotes("Data flow, left to right. Structured transactions and accounts land through Openflow; unstructured policy and filing PDFs are parsed with AI_PARSE_DOCUMENT and indexed in Cortex Search. Dynamic Tables keep flow features fresh; a Snowpark graph detector writes alerts. A Cortex Agent combines Cortex Analyst over a semantic view with Cortex Search, so answers carry both numbers and policy citations. The investigator app runs on Snowpark Container Services, so data never leaves Snowflake.");
   }
 
+  // ===== CoCo CLI workflow =====
+  {
+    const s = content("2 · BUILT AND RUN WITH COCO CLI", "Three modular skills: input → processing → output", "Solution & Architecture");
+    const steps = [
+      ["INPUT", C.accent5, "$muletrace-ingest", "Loads 10,259 transactions, 603 accounts and 17 policy sections into Snowflake and verifies the counts."],
+      ["PROCESSING", C.accent3, "$muletrace-detect", "Refreshes Dynamic Tables, runs the Snowpark graph detector and ranks 6 laundering networks."],
+      ["OUTPUT", C.accent2, "$muletrace-investigate F001", "Pulls the evidence pack, quotes AML-04 §3.2, logs the decision and drafts the STR with AI_COMPLETE."],
+    ];
+    steps.forEach(([k, col, cmd, d], i) => {
+      const x = 0.5 + i * 3.075;
+      txt(s, k, { x, y: 1.35, w: 2.85, h: 0.25, fontSize: 11, bold: true, color: col, charSpacing: 1 });
+      s.addShape(S.ROUNDED_RECTANGLE, { x, y: 1.68, w: 2.85, h: 2.55, rectRadius: 0.08, fill: { color: C.text2 }, line: { type: "none" } });
+      [0, 1, 2].forEach((d0) => s.addShape(S.OVAL, { x: x + 0.18 + d0 * 0.18, y: 1.82, w: 0.1, h: 0.1, fill: { color: ["E4572E", "E8A33D", "1B998B"][d0] }, line: { type: "none" } }));
+      txt(s, [{ text: "> ", options: { color: col } }, { text: cmd, options: { color: C.background1 } }], { x: x + 0.18, y: 2.1, w: 2.5, h: 0.5, fontSize: 12, bold: true, fontFace: "Courier New" });
+      txt(s, d, { x: x + 0.18, y: 2.7, w: 2.5, h: 1.4, fontSize: 12, color: C.background2 });
+      if (i < 2) arrow(s, x + 2.88, 2.95, x + 3.05, 2.95, { color: C.accent6, width: 1.5 });
+    });
+    iconCircle(s, I.plug, 0.5, 4.45, 0.5, C.accent4);
+    txt(s, "Each skill is a markdown file in .cortex/skills: reusable by any analyst, versioned in Git, and chained by CoCo CLI into one end-to-end workflow.", { x: 1.2, y: 4.38, w: 8.3, h: 0.65, fontSize: 14, valign: "middle" });
+    s.addNotes("This is the workflow shown in the demo video, executed in CoCo CLI. Input: one skill loads structured and unstructured data. Processing: one skill builds features and runs the detector. Output: one skill investigates a finding and drafts the STR. Each is a separate, reusable skill.");
+  }
+
   // ===== 8. CoCo skills =====
   {
     const s = content("2 · COCO CLI SKILLS", "12 CoCo CLI skills, each building one module", "Solution & Architecture");
@@ -513,21 +587,45 @@ function ringMotif(s, cx, cy, R, n, rHub, rNode) {
     s.addNotes("Scalability comes from Snowflake: elastic warehouses, incremental dynamic tables, and graph search bounded by time window and partition. Beyond the demo, the same pipeline takes new typologies as plug-in rules, shares mule signals across banks through clean rooms, and the agent can answer credit, liquidity and Basel questions because it is a general risk copilot over governed data.");
   }
 
+  // ===== Roadmap =====
+  {
+    const s = content("3 · ROADMAP", "From working MVP to a bank pilot", "Impact");
+    const phases = [
+      ["NOW", "MVP · Oct 2026", C.accent2, ["Live investigator app", "Graph detector with measured accuracy", "Copilot, STR drafts, audit log", "Snowflake SQL + 3 CoCo skills"]],
+      ["NEXT", "Grand Finale · 27–30 Oct", C.accent5, ["Full workflow running in Snowflake", "Cortex Agent answering in the live app", "Hourly detection task + alerts", "PDF policies via AI_PARSE_DOCUMENT"]],
+      ["THEN", "90-day bank pilot", C.accent4, ["Anonymised production data", "Thresholds tuned with investigators", "Time-to-STR measured against baseline", "Cross-bank signals via clean rooms"]],
+    ];
+    phases.forEach(([k, when, col, pts], i) => {
+      const x = 0.5 + i * 3.075;
+      card(s, x, 1.38, 2.85, 3.7);
+      s.addShape(S.ROUNDED_RECTANGLE, { x: x + 0.22, y: 1.58, w: 0.9, h: 0.3, rectRadius: 0.15, fill: { color: col }, line: { type: "none" } });
+      txt(s, k, { x: x + 0.22, y: 1.58, w: 0.9, h: 0.3, fontSize: 11, bold: true, color: C.background1, align: "center", valign: "middle" });
+      txt(s, when, { x: x + 0.22, y: 2.0, w: 2.45, h: 0.35, fontSize: 15, bold: true });
+      pts.forEach((t, kk) => {
+        const y = 2.5 + kk * 0.6;
+        s.addShape(S.OVAL, { x: x + 0.24, y: y + 0.1, w: 0.1, h: 0.1, fill: { color: col }, line: { type: "none" } });
+        txt(s, t, { x: x + 0.45, y, w: 2.25, h: 0.55, fontSize: 13 });
+      });
+      if (i < 2) arrow(s, x + 2.88, 3.2, x + 3.05, 3.2, { color: C.accent6, width: 1.5 });
+    });
+    s.addNotes("Where this goes. Today: a working MVP. By the finale: the complete workflow running inside Snowflake, with the Cortex Agent behind the live app. After that: a 90-day pilot with a bank on anonymised data, measuring time-to-STR against today's baseline.");
+  }
+
   // ===== Judging focus =====
   {
-    const s = content("WHY MULETRACE", "How MuleTrace meets the judging focus", "Impact");
+    const s = content("WHY MULETRACE", "How MuleTrace scores on the rubric", "Impact");
     const cols = [
-      [I.gavel, C.accent1, "Real-world relevance", [
+      [I.gavel, C.accent1, "Real-world relevance|30% of score", [
         "Built for Indian banking reality: UPI-scale mule networks, PMLA, FIU-IND STRs",
         "Follows how AML teams actually work: alert, evidence, decision, report",
         "Respects PII masking, tipping-off and record-keeping rules",
       ]],
-      [I.bolt, C.accent5, "Technical execution", [
+      [I.bolt, C.accent5, "Technical execution|40% of score", [
         "Time-ordered graph detection: 100% precision, 99.95% recall",
         "The same detector runs locally and as a Snowpark procedure",
         "Cortex Agent, Cortex Search, semantic view, Dynamic Tables, AI_COMPLETE",
       ]],
-      [I.layers, C.accent2, "Solution completeness", [
+      [I.layers, C.accent2, "Solution completeness|30% of score", [
         "Covers the full flow: signal, evidence, documented finding, report",
         "Joins transactions and KYC data with policy and filing text",
         "Working app, open code, reproducible data and audit trail",
@@ -537,7 +635,9 @@ function ringMotif(s, cx, cy, R, n, rHub, rNode) {
       const x = 0.5 + i * 3.075;
       card(s, x, 1.38, 2.85, 3.7);
       iconCircle(s, ic, x + 0.22, 1.55, 0.5, col);
-      txt(s, h, { x: x + 0.85, y: 1.55, w: 1.9, h: 0.5, fontSize: 15, bold: true, valign: "middle" });
+      const [hName, hWeight] = h.split("|");
+      txt(s, [{ text: hName, options: { bold: true, fontSize: 15, breakLine: true } }, { text: hWeight, options: { fontSize: 11, bold: true, color: col } }],
+        { x: x + 0.85, y: 1.5, w: 1.95, h: 0.62, valign: "middle" });
       pts.forEach((t, k) => {
         const y = 2.25 + k * 0.92;
         s.addShape(S.OVAL, { x: x + 0.24, y: y + 0.08, w: 0.1, h: 0.1, fill: { color: col }, line: { type: "none" } });
