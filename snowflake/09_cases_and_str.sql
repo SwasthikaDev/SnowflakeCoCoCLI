@@ -26,7 +26,7 @@ SELECT
 FROM FINDINGS f;
 
 -- Draft the "grounds of suspicion" narrative with Cortex, strictly from the evidence pack.
-CREATE OR REPLACE PROCEDURE DRAFT_STR(FINDING STRING, MODEL STRING DEFAULT 'mistral-large2')
+CREATE OR REPLACE PROCEDURE DRAFT_STR(FINDING STRING, MODEL STRING DEFAULT 'claude-sonnet-4-5')
   RETURNS STRING
   LANGUAGE SQL
 AS

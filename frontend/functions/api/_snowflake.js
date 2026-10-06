@@ -5,7 +5,7 @@
 //   SNOWFLAKE_PAT           a programmatic access token for a role that can use Cortex
 // Optional:
 //   SNOWFLAKE_AGENT         fully qualified agent, e.g. MULETRACE.APP.MULETRACE_AGENT (uses the Cortex Agent)
-//   SNOWFLAKE_MODEL         model for AI_COMPLETE fallback (default: mistral-large2)
+//   SNOWFLAKE_MODEL         model for AI_COMPLETE fallback (default: claude-sonnet-4-5)
 
 export const configured = (env) => Boolean(env.SNOWFLAKE_ACCOUNT_URL && env.SNOWFLAKE_PAT);
 
@@ -66,7 +66,7 @@ export async function complete(env, system, user) {
     method: "POST",
     headers: headers(env),
     body: JSON.stringify({
-      model: env.SNOWFLAKE_MODEL || "mistral-large2",
+      model: env.SNOWFLAKE_MODEL || "claude-sonnet-4-5",
       messages: [{ role: "system", content: system }, { role: "user", content: user }],
       max_tokens: 900,
       temperature: 0,

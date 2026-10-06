@@ -47,6 +47,9 @@ CREATE OR REPLACE AGENT MULETRACE_AGENT
   tool_resources:
     TransactionAnalyst:
       semantic_view: "MULETRACE.APP.MULETRACE_SV"
+      execution_environment:
+        type: "warehouse"
+        warehouse: "MULETRACE_WH"
     PolicySearch:
       search_service: "MULETRACE.APP.POLICY_SEARCH"
       max_results: "4"

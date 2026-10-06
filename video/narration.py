@@ -15,13 +15,14 @@ SCENES = [
         "Here is the problem. Ten lakh rupees can leave a bank as two thousand transfers of five hundred rupees, "
         "through a hundred mule accounts. Every transfer sits below every threshold, so no rule fires. "
         "The fraud is only visible as a network."},
-    {"id": "03_pipeline", "kind": "terminal", "text":
-        "Let's run it end to end. The input is a synthetic month of banking data: ten thousand transactions, "
-        "six hundred accounts with KYC details, and our AML policy documents. "
-        "Processing: the graph detector scans every transaction for four laundering typologies. "
-        "The output is six suspicious networks, ranked by risk. Because the data carries hidden ground-truth labels, "
-        "we can score ourselves: one hundred percent precision and ninety-nine point nine five percent recall, "
-        "in about a tenth of a second."},
+    {"id": "03_coco", "kind": "coco", "text":
+        "Here is the end-to-end workflow, executed live in Snowflake's CoCo CLI with three modular skills. "
+        "Input: the ingest skill verifies what landed in Snowflake: ten thousand transactions, six hundred accounts with KYC data, "
+        "and seventeen policy sections, our structured and unstructured sources. "
+        "Processing: the detect skill calls our Snowpark procedure, which runs the graph detector inside Snowflake "
+        "and ranks six laundering networks, led by a nine point nine four lakh rupee structuring ring. "
+        "Output: the investigate skill pulls the evidence pack and the policy clause it breaches, records an escalation, "
+        "and calls Cortex AI to draft the grounds of suspicion for the STR. Model thinking time is sped up; every query and result is real."},
     {"id": "04_overview", "kind": "app", "text":
         "This is the investigator workspace, live on Cloudflare. The header shows the month at a glance: "
         "transactions, accounts, networks found, and thirty lakh rupees at risk. "
@@ -57,13 +58,10 @@ SCENES = [
         "recommended actions, and the filing deadline. Only the Principal Officer can mark it filed, "
         "and every step lands in the audit log."},
     {"id": "10_architecture", "kind": "slide", "slide": 13, "text":
-        "Under the hood, MuleTrace is designed Snowflake-native. Transactions and policy documents land in Snowflake. "
-        "Dynamic Tables keep flow features fresh. The same Python detector runs as a Snowpark procedure. "
-        "Cortex Search indexes the policies, and a Cortex Agent combines a semantic view with search, "
-        "so every answer carries both numbers and citations."},
-    {"id": "11_coco", "kind": "slide", "slide": 14, "text":
-        "The workflow is packaged as three modular CoCo CLI skills: ingest for input, detect for processing, "
-        "and investigate for output. Each is a reusable skill, versioned in the repository."},
+        "All of this runs on Snowflake. Transactions and policy documents land in Snowflake tables. "
+        "Dynamic Tables keep flow features fresh. The same Python detector runs as a Snowpark procedure on an hourly task. "
+        "Cortex Search indexes the policies, a Cortex Agent combines a semantic view with search, so answers carry numbers and citations, "
+        "and AI_COMPLETE drafts the report."},
     {"id": "12_results", "kind": "slide", "slide": 17, "text":
         "The results: every planted scheme caught, no legitimate look-alikes flagged, and a complete path from signal, "
         "to evidence, to a filed report."},

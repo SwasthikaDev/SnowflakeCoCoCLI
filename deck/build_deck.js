@@ -165,7 +165,7 @@ function ringMotif(s, cx, cy, R, n, rHub, rNode) {
     const s = content("EXECUTIVE SUMMARY", "Catch the network, cite the rule, file the STR", "Introduction");
     const cols = [
       ["THE PROBLEM", C.accent1, "Mule networks split lakhs into thousands of small UPI transfers.", "Each transfer looks harmless, so rules miss the scheme and analysts trace it by hand for days, then write the STR from scratch."],
-      ["WHAT WE BUILT", C.accent4, "A copilot that sees the network, explains it and drafts the report.", "Graph detection of four laundering typologies, evidence and policy clauses on every alert, plain-English Q&A, one-click STR, designed Snowflake-native."],
+      ["WHAT WE BUILT", C.accent4, "A copilot that sees the network, explains it and drafts the report.", "Graph detection of four laundering typologies, evidence and policy clauses on every alert, plain-English Q&A, one-click STR. Running on Snowflake, built with CoCo CLI."],
     ];
     cols.forEach(([k, col, h, d], i) => {
       const x = 0.5 + i * 3.075;
@@ -439,7 +439,7 @@ function ringMotif(s, cx, cy, R, n, rHub, rNode) {
     card(s, 2.32, 4.1, 7.01, 0.45, C.background2);
     txt(s, [
       { text: "Governance on every layer: ", options: { bold: true } },
-      { text: "masking & row-access policies on PII · lineage · ACCESS_HISTORY audit trail" },
+      { text: "role-aware secure views mask PII · ground truth hidden · least-privilege roles" },
     ], { x: 2.45, y: 4.1, w: 6.8, h: 0.45, fontSize: 11, valign: "middle" });
     txt(s, "Dashed line = Snowflake account boundary. Blue = structured data path, violet = unstructured.", { x: 0.5, y: 4.78, w: 9, h: 0.25, fontSize: 10, color: C.accent6 });
     s.addNotes("Data flow, left to right. Structured transactions and accounts land through Openflow; unstructured policy and filing PDFs are parsed with AI_PARSE_DOCUMENT and indexed in Cortex Search. Dynamic Tables keep flow features fresh; a Snowpark graph detector writes alerts. A Cortex Agent combines Cortex Analyst over a semantic view with Cortex Search, so answers carry both numbers and policy citations. The investigator app runs on Snowpark Container Services, so data never leaves Snowflake.");
@@ -453,7 +453,18 @@ function ringMotif(s, cx, cy, R, n, rHub, rNode) {
       ["PROCESSING", C.accent3, "$muletrace-detect", "Refreshes Dynamic Tables, runs the Snowpark graph detector and ranks 6 laundering networks."],
       ["OUTPUT", C.accent2, "$muletrace-investigate F001", "Pulls the evidence pack, quotes AML-04 §3.2, logs the decision and drafts the STR with AI_COMPLETE."],
     ];
-    steps.forEach(([k, col, cmd, d], i) => {
+    const real = require("fs").existsSync("shots/coco_detect.png");
+    if (real) {
+      screenshot(s, "shots/coco_detect.png", 3.25, 1.35, 6.25, 3.52);
+      steps.forEach(([k, col, cmd, d], i) => {
+        const y = 1.35 + i * 1.2;
+        txt(s, k, { x: 0.5, y, w: 2.5, h: 0.25, fontSize: 11, bold: true, color: col, charSpacing: 1 });
+        txt(s, cmd.split(" ")[0], { x: 0.5, y: y + 0.27, w: 2.6, h: 0.3, fontSize: 12, bold: true, fontFace: "Courier New" });
+        txt(s, d.split(".")[0] + ".", { x: 0.5, y: y + 0.58, w: 2.6, h: 0.55, fontSize: 11, color: C.accent6 });
+      });
+      txt(s, "Real CoCo CLI session running the MuleTrace skills against Snowflake (connection: muletrace).", { x: 3.25, y: 4.95, w: 6.25, h: 0.25, fontSize: 10, italic: true, color: C.accent6 });
+    }
+    if (!real) steps.forEach(([k, col, cmd, d], i) => {
       const x = 0.5 + i * 3.075;
       txt(s, k, { x, y: 1.35, w: 2.85, h: 0.25, fontSize: 11, bold: true, color: col, charSpacing: 1 });
       s.addShape(S.ROUNDED_RECTANGLE, { x, y: 1.68, w: 2.85, h: 2.55, rectRadius: 0.08, fill: { color: C.text2 }, line: { type: "none" } });
@@ -462,8 +473,8 @@ function ringMotif(s, cx, cy, R, n, rHub, rNode) {
       txt(s, d, { x: x + 0.18, y: 2.7, w: 2.5, h: 1.4, fontSize: 12, color: C.background2 });
       if (i < 2) arrow(s, x + 2.88, 2.95, x + 3.05, 2.95, { color: C.accent6, width: 1.5 });
     });
-    iconCircle(s, I.plug, 0.5, 4.45, 0.5, C.accent4);
-    txt(s, "Each skill is a markdown file in .cortex/skills: reusable by any analyst, versioned in Git, and chained by CoCo CLI into one end-to-end workflow.", { x: 1.2, y: 4.38, w: 8.3, h: 0.65, fontSize: 14, valign: "middle" });
+    if (!real) iconCircle(s, I.plug, 0.5, 4.45, 0.5, C.accent4);
+    if (!real) txt(s, "Each skill is a markdown file in .cortex/skills: reusable by any analyst, versioned in Git, and chained by CoCo CLI into one end-to-end workflow.", { x: 1.2, y: 4.38, w: 8.3, h: 0.65, fontSize: 14, valign: "middle" });
     s.addNotes("This is the workflow shown in the demo video, executed in CoCo CLI. Input: one skill loads structured and unstructured data. Processing: one skill builds features and runs the detector. Output: one skill investigates a finding and drafts the STR. Each is a separate, reusable skill.");
   }
 
@@ -591,8 +602,8 @@ function ringMotif(s, cx, cy, R, n, rHub, rNode) {
   {
     const s = content("3 · ROADMAP", "From working MVP to a bank pilot", "Impact");
     const phases = [
-      ["NOW", "MVP · Oct 2026", C.accent2, ["Live investigator app", "Graph detector with measured accuracy", "Copilot, STR drafts, audit log", "Snowflake SQL + 3 CoCo skills"]],
-      ["NEXT", "Grand Finale · 27–30 Oct", C.accent5, ["Full workflow running in Snowflake", "Cortex Agent answering in the live app", "Hourly detection task + alerts", "PDF policies via AI_PARSE_DOCUMENT"]],
+      ["NOW", "MVP · Oct 2026", C.accent2, ["Live investigator app + measured accuracy", "Running on Snowflake: Snowpark, Cortex Search, Cortex Agent", "3 CoCo CLI skills, end to end", "STR drafts via AI_COMPLETE"]],
+      ["NEXT", "Grand Finale · 27–30 Oct", C.accent5, ["Cortex Agent behind the live app", "Alerts to the compliance inbox", "PDF policies via AI_PARSE_DOCUMENT", "Enterprise masking + access history"]],
       ["THEN", "90-day bank pilot", C.accent4, ["Anonymised production data", "Thresholds tuned with investigators", "Time-to-STR measured against baseline", "Cross-bank signals via clean rooms"]],
     ];
     phases.forEach(([k, when, col, pts], i) => {
@@ -622,8 +633,8 @@ function ringMotif(s, cx, cy, R, n, rHub, rNode) {
       ]],
       [I.bolt, C.accent5, "Technical execution|40% of score", [
         "Time-ordered graph detection: 100% precision, 99.95% recall",
-        "The same detector runs locally and as a Snowpark procedure",
-        "Cortex Agent, Cortex Search, semantic view, Dynamic Tables, AI_COMPLETE",
+        "Same detector locally and as a Snowpark procedure, hourly task",
+        "Live on Snowflake: Cortex Agent, Cortex Search, semantic view, AI_COMPLETE",
       ]],
       [I.layers, C.accent2, "Solution completeness|30% of score", [
         "Covers the full flow: signal, evidence, documented finding, report",

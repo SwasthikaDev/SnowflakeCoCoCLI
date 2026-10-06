@@ -39,7 +39,16 @@ def run(session, config):
     for r in session.table("MULETRACE.RAW.ACCOUNTS").collect():
         d = {k.lower(): ("" if v is None else str(v)) for k, v in r.as_dict().items()}
         meta[d["account_id"]] = d
-    result = analyze(parse_rows(txn_rows), meta, json.loads(str(config)) if config else None)
+    if isinstance(config, dict):
+        cfg = config
+    else:
+        try:
+            cfg = json.loads(str(config)) if config is not None else None
+        except ValueError:
+            cfg = None  # NULL / empty VARIANT -> detector defaults
+        if not isinstance(cfg, dict):
+            cfg = None
+    result = analyze(parse_rows(txn_rows), meta, cfg)
     now = datetime.now(timezone.utc)
 
     findings, fa, ft = [], [], []
@@ -52,14 +61,14 @@ def run(session, config):
     risk = [[n["id"], n["risk"], json.dumps(n["roles"]), json.dumps(n["flags"]), now] for n in result["nodes"] if n["roles"]]
 
     def overwrite(table, rows, cols, variant_cols=()):
-        tmp = f"{table}_STAGE"
-        if not rows:
-            session.sql(f"TRUNCATE TABLE {table}").collect()
-            return
-        session.create_dataframe(rows, schema=cols).write.mode("overwrite").save_as_table(tmp, table_type="temporary")
-        select = ", ".join(f"PARSE_JSON({c})" if c in variant_cols else c for c in cols)
+        # Owner's-rights procedures can't create temp tables, so rows travel as one bound JSON array
+        # and are unpacked with FLATTEN (batched to keep each bind small).
         session.sql(f"TRUNCATE TABLE {table}").collect()
-        session.sql(f"INSERT INTO {table} SELECT {select} FROM {tmp}").collect()
+        select = ", ".join(f"PARSE_JSON(f.value:{c}::STRING)" if c in variant_cols else f"f.value:{c}" for c in cols)
+        for i in range(0, len(rows), 1000):
+            batch = json.dumps([dict(zip(cols, r)) for r in rows[i:i + 1000]], default=str)
+            session.sql(f"INSERT INTO {table} ({', '.join(cols)}) SELECT {select} "
+                        f"FROM TABLE(FLATTEN(INPUT => PARSE_JSON(?))) f", params=[batch]).collect()
 
     overwrite("MULETRACE.CORE.FINDINGS", findings,
               ["FINDING_ID", "RUN_AT", "TYPOLOGY", "PATTERN", "SEVERITY", "RISK_SCORE", "TOTAL_AMOUNT", "GROSS_FLOW",
