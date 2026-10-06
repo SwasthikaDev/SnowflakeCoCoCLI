@@ -368,19 +368,19 @@ function ringMotif(s, cx, cy, R, n, rHub, rNode) {
     const s = content("2 · USER EXPERIENCE", "Ask in plain English, get an answer you can defend", "Solution & Architecture");
     s.addImage({ data: I.user, x: 0.5, y: 1.5, w: 0.32, h: 0.32 });
     card(s, 1.0, 1.38, 4.8, 0.8);
-    txt(s, "Which accounts received over ₹5 lakh in sub-₹1,000 transfers last week? Does that breach our policy?", { x: 1.15, y: 1.38, w: 4.5, h: 0.8, fontSize: 13, italic: true, valign: "middle" });
+    txt(s, "Which accounts received over ₹5 lakh in sub-₹1,000 transfers? Does that breach our policy?", { x: 1.15, y: 1.38, w: 4.5, h: 0.8, fontSize: 13, italic: true, valign: "middle" });
     card(s, 0.5, 2.35, 5.3, 2.5, C.background1, { line: { color: C.accent2, width: 1.25 } });
     iconCircle(s, I.robot, 0.68, 2.5, 0.4, C.accent2);
     txt(s, "MuleTrace", { x: 1.18, y: 2.5, w: 2, h: 0.4, fontSize: 12, bold: true, color: C.accent2, valign: "middle" });
     txt(s, [
       { text: "1 account matches. ", options: { bold: true } },
-      { text: "AC48213907 received ₹9.96 lakh in 2,000 transfers from 100 accounts (11–15 Sep).", options: { breakLine: true } },
-      { text: "Pattern: structuring · Risk 92/100. ", options: { bold: true } },
-      { text: "This breaches policy AML-04 §3.2 (repeated sub-threshold credits from unrelated senders)." },
+      { text: "AC79448796 received ₹9.94 lakh in 2,000 transfers from 100 accounts (11–15 Sep).", options: { breakLine: true } },
+      { text: "Finding F001: structuring · Risk 98/100. ", options: { bold: true } },
+      { text: "Matches policy AML-04 §3.2: 10+ unrelated senders, 5+ transfers of ≤₹2,000 each, same amount, >₹1 lakh total." },
     ], { x: 0.7, y: 3.0, w: 4.9, h: 1.25, fontSize: 13 });
     pill(s, "View network", 0.7, 4.38, 1.35, C.accent2, C.background1);
     pill(s, "Draft STR", 2.17, 4.38, 1.1, C.text2, C.background1);
-    txt(s, "Illustrative output on synthetic data", { x: 0.5, y: 4.92, w: 5.3, h: 0.25, fontSize: 10, italic: true, color: C.accent6 });
+    txt(s, "Actual output from the MuleTrace demo on synthetic data", { x: 0.5, y: 4.92, w: 5.3, h: 0.25, fontSize: 10, italic: true, color: C.accent6 });
     // right: evidence
     card(s, 6.1, 1.38, 3.4, 1.95);
     const hx = 8.6, hy = 2.36;
@@ -404,7 +404,7 @@ function ringMotif(s, cx, cy, R, n, rHub, rNode) {
       ["Days → < 5 min", "From alert to a full evidence pack for a ring of 100 accounts", "TARGET", C.accent1],
       ["< 1 min", "To a first STR draft, so analysts review instead of write", "TARGET", C.accent4],
       ["100%", "Of answers cite source transactions and a policy clause", "DESIGN GOAL", C.accent2],
-      ["Precision / recall", "Scored live against ground-truth labels planted in the synthetic data", "MEASURED IN DEMO", C.accent5],
+      ["100% / 99.95%", "Precision / recall against ground-truth labels planted in the synthetic data", "MEASURED IN DEMO", C.accent5],
     ];
     st.forEach(([n, l, tag, col], i) => {
       const x = i % 2 ? 5.1 : 0.5, y = i < 2 ? 1.38 : 3.18;
