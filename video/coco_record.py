@@ -155,11 +155,20 @@ class Recorder:
         while time.time() - start < timeout:
             time.sleep(0.5)
             t = self.text()
-            if "Allow" in t and ("[y]" in t.lower() or "yes" in t.lower()) and time.time() - self.last_change > 1.5:
+            if "Enter select" in t and "1. Yes" in t and time.time() - self.last_change > 1.2:
+                self.proc.write("1")  # CoCo's "Execute SQL?" menu: choose 1. Yes
+                time.sleep(0.4)
+                self.proc.write(chr(13))
+                time.sleep(1.5)
+                continue
+            low = t.lower()
+            asking = any(k in low for k in ("allow", "approve", "(y/n)", "[y]", "do you want to run", "proceed?"))
+            if asking and "esc to interrupt" not in low and time.time() - self.last_change > 1.5:
                 self.proc.write("y")  # approve the tool call CoCo asks about
                 time.sleep(1)
                 continue
-            if time.time() - self.last_change > quiet and ready_marker in t:
+            busy = "esc to interrupt" in t or "Romping" in t or "Thinking" in t
+            if time.time() - self.last_change > quiet and not busy and time.time() - start > 8:
                 return True
         return False
 
@@ -199,6 +208,7 @@ def main():
         rec.proc.write("\r")
         ok = rec.wait_idle()
         print(f"{label}: {'done' if ok else 'TIMEOUT'} at {time.time() - rec.t0:.0f}s", flush=True)
+        (rec.dir / f"screen_{label}.txt").write_text(rec.text(), encoding="utf-8")
         time.sleep(2)
         rec.snap()
     rec.close()

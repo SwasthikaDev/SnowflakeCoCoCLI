@@ -27,7 +27,7 @@ def run(args):
 
 def segment(scene):
     sid = scene["id"]
-    dur = META[sid]["duration"] + PAD
+    dur = META[sid]["duration"] + PAD + (6.0 if scene["kind"] == "coco" else 0.0)
     audio = str(BUILD / "audio" / f"{sid}.mp3")
     out = SEG / f"{sid}.mp4"
     afilter = f"[1:a]apad,atrim=0:{dur:.2f},aresample=48000[a]"
@@ -38,6 +38,20 @@ def segment(scene):
               f":d={frames}:s=1920x1080:fps={FPS},format=yuv420p[v]")
         run(["-loop", "1", "-framerate", str(FPS), "-t", f"{dur:.2f}", "-i", img, "-i", audio,
              "-filter_complex", f"{vf};{afilter}", "-map", "[v]", "-map", "[a]", "-t", f"{dur:.2f}", *ENC, str(out)])
+    elif scene["kind"] == "coco":
+        # Real CoCo CLI session (idle gaps already compressed); retime it to the narration length.
+        clip = BUILD / "coco" / "workflow.mp4"
+        _, clip_dur = imageio_ffmpeg.count_frames_and_secs(str(clip))
+        factor = dur / clip_dur
+        note = "Real CoCo CLI session"
+        vf = (f"[0:v]setpts=PTS*{factor:.4f},fps={FPS},scale=1920:1080,"
+              f"drawtext=fontfile='C\\:/Windows/Fonts/segoeui.ttf':text='{note}':x=w-tw-50:y=110:fontsize=22:"
+              f"fontcolor=white@0.9:box=1:boxcolor=black@0.6:boxborderw=8,"
+              f"drawtext=fontfile='C\:/Windows/Fonts/segoeui.ttf':text='thinking time sped up':x=w-tw-50:y=150:fontsize=20:"
+              f"fontcolor=white@0.75:box=1:boxcolor=black@0.6:boxborderw=8,"
+              f"tpad=stop_mode=clone:stop_duration=5,trim=0:{dur:.2f},setpts=PTS-STARTPTS[v]")
+        run(["-i", str(clip), "-i", audio, "-filter_complex", f"{vf};{afilter}", "-map", "[v]", "-map", "[a]",
+             "-t", f"{dur:.2f}", *ENC, str(out)])
     else:
         clip = str(BUILD / "clips" / f"{sid}.webm")
         off = OFFSETS[sid]
@@ -49,7 +63,7 @@ def segment(scene):
 
 SPOKEN_TO_SHOWN = {"F zero zero one": "F001", "F zero zero two": "F002", "F zero zero three": "F003",
                    "F zero zero five": "F005", "ninety-nine point nine five percent": "99.95%",
-                   "one hundred percent": "100%"}
+                   "one hundred percent": "100%", "a nine point nine four lakh rupee": "a ₹9.94 lakh"}
 
 
 def srt_time(t):
