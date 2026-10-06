@@ -8,7 +8,7 @@ const { applyTheme } = require("./apply_theme.js");
 
 const OUT = "MuleTrace_MVP_Brief.pptx";
 const REPO_URL = "github.com/SwasthikaDev/SnowflakeCoCoCLI";
-const LIVE_URL = process.env.LIVE_URL || "";
+const LIVE_URL = process.env.LIVE_URL ?? "muletrace.pages.dev";
 
 const THEME = {
   name: "MuleTrace",

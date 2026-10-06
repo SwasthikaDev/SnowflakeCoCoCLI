@@ -93,7 +93,7 @@
     {#if busy}<div class="msg bot thinking">Querying the transaction graph…</div>{/if}
   </div>
   <form class="composer" onsubmit={(e) => { e.preventDefault(); send(); }}>
-    <input placeholder="Ask in plain English… e.g. “Explain F004”" bind:value={input} />
+    <input placeholder="Ask in plain English… e.g. “Explain F001”" bind:value={input} />
     <button class="btn primary" disabled={busy || !input.trim()}>Ask</button>
   </form>
   <div class="mode">

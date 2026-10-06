@@ -9,7 +9,8 @@
 | | |
 |---|---|
 | 📊 **Deck** | [`deck/MuleTrace_MVP_Brief.pptx`](deck/MuleTrace_MVP_Brief.pptx) |
-| 🖥️ **App** | Svelte investigator workspace (`frontend/`), deployable to Cloudflare Pages |
+| 🌐 **Live demo** | **https://muletrace.pages.dev** · e.g. [F001 explained](https://muletrace.pages.dev/?finding=F001&tab=copilot&q=Explain%20F001%20and%20the%20policy%20it%20breaches) · [STR draft](https://muletrace.pages.dev/?finding=F005&tab=str&role=principal) |
+| 🖥️ **App** | Svelte investigator workspace (`frontend/`) on Cloudflare Pages |
 | ❄️ **Snowflake** | Numbered SQL in [`snowflake/`](snowflake/) + custom CoCo skill in [`.cortex/skills/`](.cortex/skills/muletrace-investigate/SKILL.md) |
 
 ## What it does — signal → evidence → finding → report
@@ -88,7 +89,7 @@ No Snowflake account is needed for the demo: the copilot's evidence engine runs 
 for f in snowflake/0*.sql; do snow sql -f "$f"; done
 ```
 
-**Cloudflare Pages:** connect this repo in the Cloudflare dashboard with root directory `frontend`, build command `npm run build`, output directory `dist`. To switch the copilot to Snowflake Cortex, add these secrets:
+**Cloudflare Pages:** `cd frontend && npm run deploy` (Wrangler direct upload), or connect this repo in the Cloudflare dashboard with root directory `frontend`, build command `npm run build`, output directory `dist`. To switch the copilot to Snowflake Cortex, add these secrets:
 
 | Variable | Example |
 |---|---|
